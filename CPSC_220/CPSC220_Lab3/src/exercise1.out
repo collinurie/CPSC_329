@@ -1,0 +1,22 @@
+#_____Collin Urie_____
+
+#load imediates, place them in registers
+#store in register 2,3,4
+0x8206
+0x830f
+0x8464
+
+#multiply reg[2]* reg[3] = reg[5]
+0x2523
+
+#subtract reg[5] - reg[4] = reg[6]
+0x1654
+
+#operate print Syscall
+0x8102
+0x0206
+0xf000
+
+#operate halt Syscall
+0x8100
+0xf000
