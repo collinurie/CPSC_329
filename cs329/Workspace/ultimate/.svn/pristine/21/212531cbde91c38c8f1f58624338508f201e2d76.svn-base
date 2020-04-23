@@ -1,0 +1,158 @@
+package GUI;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.Pane;
+import javafx.scene.control.ButtonType;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+
+
+public class BoardCustomCanvas extends Canvas{
+//	
+//	private static Rules rules;
+//	private static Board board;
+//	private static int boardSize = 19;
+//	private static Game game;
+//	
+
+	public  BoardCustomCanvas() {
+		super();
+//		board = new Board();
+//		getRulesFromGUI(board);
+//		game = new Game(rules,boardSize);
+//		updateScores();
+
+		this.setWidth(760);
+		this.setHeight(760);
+		buildGrid();
+	}
+	
+	private void buildGrid() {
+		GraphicsContext g = this.getGraphicsContext2D();
+		g.setFill(Color.DARKGREEN);
+		g.fillRect(0, 0, 760, 760);
+		g.setFill(Color.LAWNGREEN);
+		g.fillRect(20, 20, 720, 720);
+		g.setFill(Color.LIGHTGREEN);
+		g.fillRect(280, 280, 200, 200);
+		g.setFill(Color.BLACK);
+		g.fillOval(375, 375, 10, 10);
+		for(int i = 20; i <= 740; i = i + 40) {
+			g.setStroke(Color.BLACK);
+			g.strokeLine(i, 740, i, 20);
+		}
+		for(int i = 20; i <= 740; i = i + 40) {
+			g.setStroke(Color.BLACK);
+			g.strokeLine(740, i, 20, i);
+		}
+	}
+//	
+////	private void placeStone(int x, int y,int player) {
+////		boolean moveMade = game.makeMove(x,y,player);
+////		updateScores();
+////		if(moveMade) {
+////			boolean win = game.checkWin(x,y,player);
+////			int[][] b = game.getBoard().getBoard();
+////			paintBoard(b);
+////			if(win) {
+////				try {
+////					showGameOver(player);
+////				} catch ( IOException e ) {
+////					e.printStackTrace();
+////				}
+////			}
+////		}
+////		
+////	}
+//	
+	private void paintBoard(int [][] b) {
+		GraphicsContext g = this.getGraphicsContext2D();
+		g.setFill(Color.TRANSPARENT);
+		g.fillRect(0,0,760,760);
+		buildGrid();
+		for(int i = 0; i<b.length; i++) {
+			for(int j = 0; j<b.length; j++){
+				int stone = b[i][j];
+				if(stone != 0) {
+					if(stone == 1) {
+						g.setFill(Color.BLACK);
+					}else {
+						g.setFill(Color.WHITE);
+					}
+					g.fillOval((i*40), (j*40), 40, 40);
+				}
+			}
+		}
+		
+	}
+////	
+////	public void updateScores(){
+////		Player p1 = game.getPlayer1();
+////		Player p2 =  game.getPlayer2();
+////
+////	}
+//		
+////	/**
+////	 * gets the data from the GUI so that it can create a game based on the rule set selected by the user
+////	 */
+////	public static void getRulesFromGUI(Board b) {
+////		String ruleStr = WelcomeWindow.getRulesStr();
+////		// default is standard unless changed 
+////		rules = new StandardPente(b);
+////		
+////		if(ruleStr.equals("tournament")) {
+////			rules = new TournamentPente(b);
+////		}
+////		else if(ruleStr.equals("freestyle")) {
+////			rules = new FreestylePente(b);
+////		}
+////		
+////	}
+//	
+////	public Game getGame() {
+////		return game;
+////	}
+//	
+//	
+//	public void showGameOver(int winner) throws IOException {
+//		String color = "Black";
+//		if(winner == 2) {color = "White";}
+//		
+//		
+//		Alert alert = new Alert(AlertType.CONFIRMATION);
+//		alert.setTitle("Game Over!");
+//		alert.setHeaderText(color+" has won!");
+//		alert.setContentText("Choose your option.");
+//
+//		ButtonType buttonTypeOne = new ButtonType("Restart");
+//		ButtonType buttonTypeTwo = new ButtonType("Quit to Mian Menu");
+//
+//		alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo);
+//
+//		Optional<ButtonType> result = alert.showAndWait();
+//		if (result.get() == buttonTypeOne){
+//			FXMLLoader loader = new FXMLLoader(getClass().getResource("boardLayout.fxml"));
+//			Scene boardScene = new Scene(loader.load());
+//			Stage stage = (Stage) this.getScene().getWindow();
+//			stage.setScene(boardScene);
+//			stage.setResizable(false);
+//		stage.show();
+//		} else if (result.get() == buttonTypeTwo) {
+//			Pane welcomePane = (Pane) FXMLLoader.load(getClass().getResource("welcomePane.fxml"));
+//			Scene welcomeScene = new Scene(welcomePane);
+//
+//			Stage stage = (Stage) this.getScene().getWindow();
+//			stage.setScene(welcomeScene);
+//			stage.show();
+//
+//		}
+//	}
+}

@@ -1,0 +1,110 @@
+package Pente;
+
+import ruleSets.FiveInARowRuleSet;
+import ruleSets.FreestyleRuleSet;
+import ruleSets.GomakuCaroRuleSet;
+import ruleSets.GomakuFreestyleRuleSet;
+import ruleSets.GomakuOmokRuleSet;
+import ruleSets.GomakuTraditionalRuleSet;
+import ruleSets.KeryoRuleSet;
+import ruleSets.NoCapturesRuleSet;
+import ruleSets.RuleSet;
+import ruleSets.TournamentRuleSet;
+import ruleSets.TraditionalRuleSet;
+
+/**
+ * @author mb5053 Class to represent an actual game of pente. takes players and
+ *         a ruleset, and starts a while loop to represent the game. Sends
+ *         requests for user input periodically
+ */
+public class PenteGame {
+
+	/*
+	 * Pente: standard, tournament, Keryo-Pente, freestyle, five-in-a-row, no
+	 * captures Gomoku: standard, freestyle, Caro, Omok
+	 */
+	public static final int STANDARD = 0;
+	public static final int TOURNAMENT = 1;
+	public static final int KERYO = 2;
+	public static final int FREESTYLE = 3;
+	public static final int FIVE_IN_A_ROW = 4;
+	public static final int NO_CAPTURES = 5;
+	public static final int GOM_STANDARD = 6;
+	public static final int GOM_FREESTYLE = 7;
+	public static final int GOM_CARO = 8;
+
+	private PenteBoard board_;
+	public Player p1_;
+	public Player p2_;
+	private RuleSet rules_;
+
+	private Player[] players;
+	
+	public Player winner;
+
+	public PenteGame ( Player p1, Player p2, int ruleType ) {
+		board_ = PenteBoard.createNewPenteBoard(19,19);
+		p1_ = p1;
+		p2_ = p2;
+		p1_.setGame(this);
+		p2_.setGame(this);
+		players = new Player[2];
+		players[0] = p1_;
+		players[1] = p2_;
+		
+		if ( ruleType == TOURNAMENT ) {
+			rules_ = new TournamentRuleSet(board_);
+		} else if ( ruleType == KERYO ) {
+			rules_ = new KeryoRuleSet(board_);
+		} else if ( ruleType == FREESTYLE ) {
+			rules_ = new FreestyleRuleSet(board_);
+		} else if ( ruleType == FIVE_IN_A_ROW ) {
+			rules_ = new FiveInARowRuleSet(board_);
+		} else if ( ruleType == NO_CAPTURES ) {
+			rules_ = new NoCapturesRuleSet(board_);
+		} else if ( ruleType == GOM_STANDARD ) {
+			rules_ = new GomakuTraditionalRuleSet(board_);
+		} else if ( ruleType == GOM_FREESTYLE ) {
+			rules_ = new GomakuFreestyleRuleSet(board_);
+		} else if ( ruleType == GOM_CARO ) {
+			rules_ = new GomakuCaroRuleSet(board_);
+		} else {
+			rules_ = new TraditionalRuleSet(board_);
+		}
+	}
+
+	public boolean isWon () {
+		return rules_.isWon();
+	}
+
+	public boolean makePlayerMove ( Player player, int row, int col ) {
+		boolean ret = rules_.makeMove(player,row,col);
+		if (ret == false) {
+			return false;
+		}
+		if (rules_.isWon()) {
+			winner = players[(1+rules_.getNumMoves()) % 2];
+			return true;
+		}
+		if (getCurrentPlayer().isComputer()) {
+			((ComputerPlayer) getCurrentPlayer()).getNextMove(board_);
+		}
+		return true;
+	}
+	
+	public Player getCurrentPlayer() {
+		return players[rules_.getNumMoves() % 2];
+	}
+	
+	public PenteBoard getBoard() {
+		return board_;
+	}
+	
+	/**
+	 * @return the rules
+	 */
+	public RuleSet getRules () {
+		return rules_;
+	}
+
+}

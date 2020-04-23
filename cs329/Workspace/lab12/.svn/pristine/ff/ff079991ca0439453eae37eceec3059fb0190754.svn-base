@@ -1,0 +1,263 @@
+package decorator;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
+import javafx.animation.AnimationTimer;
+import javafx.geometry.Dimension2D;
+import javafx.scene.paint.Color;
+
+public class BreakoutGame {
+
+	private int width_, height_;
+
+	private Brick[][] bricks_;
+	private Wall[] walls_;
+	private Paddle paddle_;
+	private Ball ball_;
+
+	private int score_;
+	private int ballsLeft_;
+	private int bricksLeft_;
+
+	private static final double PADDLE_SPEED = 1.66;
+	private static final double BALL_SPEED = 1.33;
+
+	private double target_;
+
+	private AnimationTimer timer_;
+
+	private static final int BLOCKCOLS = 10, BLOCKROWS = 11;
+
+	private static final Color[] COLORS = { Color.RED, Color.ORANGE, Color.BLACK, Color.YELLOW, Color.BLACK,
+			Color.GREEN, Color.BLACK, Color.CYAN, Color.BLACK, Color.BLUE, Color.MAGENTA };
+
+	private static final int[] HITS = { 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1 };
+
+	private static final int[] POINTS = { 10, 8, 20, 6, 20, 4, 20, 3, 20, 2, 1 };
+
+	private PropertyChangeSupport support_;
+
+	public BreakoutGame(int width, int height, int numballs) {
+
+		support_ = new PropertyChangeSupport(this);
+
+		width_ = width;
+		height_ = height;
+
+		walls_ = new Wall[3];
+		walls_[0] = new Wall(0, 0, 10, height);
+		walls_[1] = new Wall(width - 10, 0, 10, height);
+		walls_[2] = new Wall(0, 0, width, 10);
+
+		bricks_ = new Brick[BLOCKROWS][BLOCKCOLS];
+		bricksLeft_ = BLOCKROWS * BLOCKCOLS;
+
+		int blockwidth = (width - 20) / BLOCKCOLS;
+		int blockheight = (height - 10) / (3 * BLOCKROWS);
+
+		for (int row = 0, y = height / 6 + 10; row < BLOCKROWS; row++, y += blockheight) {
+			for (int col = 0, x = (width - blockwidth * BLOCKCOLS) / 2; col < BLOCKCOLS; col++, x += blockwidth) {
+				bricks_[row][col] = new PlainBrick(x, y, blockwidth, blockheight, COLORS[row], POINTS[row], HITS[row]);
+			}
+		}
+		// TODO set up decorated bricks
+		for (int row = 0, y = height / 6 + 10; row < BLOCKROWS; row++, y += blockheight) {
+			for (int col = 0, x = (width - blockwidth * BLOCKCOLS) / 2; col < BLOCKCOLS; col++, x += blockwidth) {
+				if (col % 2 == 0) {
+					bricks_[row][col] = new ResizerBrick(x, y, blockwidth, blockheight, COLORS[row], POINTS[row],
+							HITS[row], 200);
+				}
+			}
+		}
+
+		resetPaddle();
+
+		ballsLeft_ = numballs;
+		score_ = 0;
+
+		timer_ = new BreakoutTimer();
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		support_.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		support_.removePropertyChangeListener(listener);
+	}
+
+	private void resetPaddle() {
+		paddle_ = new Paddle(width_ / 2 - 25, height_ - 5, 50, 10);
+		ball_ = new PlainBall(width_ / 2, height_ - 10 - 3 - 1, 6, BALL_SPEED, -BALL_SPEED);
+		target_ = -1;
+
+		support_.firePropertyChange("repaint", null, this);
+	}
+
+	public void setPaddleTarget(double x) {
+		target_ = x;
+	}
+
+	public void movePaddleLeft() {
+
+		if (paddle_.getLeft() >= PADDLE_SPEED) {
+			paddle_.moveLeft(PADDLE_SPEED);
+		}
+
+		support_.firePropertyChange("repaint", null, this);
+	}
+
+	public void movePaddleRight() {
+		if (paddle_.getRight() < width_ - PADDLE_SPEED) {
+			paddle_.moveRight(PADDLE_SPEED);
+		}
+
+		support_.firePropertyChange("repaint", null, this);
+	}
+
+	public Ball getBall() {
+		return ball_;
+	}
+
+	public Paddle getPaddle() {
+		return paddle_;
+	}
+
+	public int getScore() {
+		return score_;
+	}
+
+	public int getBallsLeft() {
+		return ballsLeft_;
+	}
+
+	public Wall[] getWalls() {
+		return walls_;
+	}
+
+	public int getBlockRows() {
+		return BLOCKROWS;
+	}
+
+	public int getBlockCols() {
+		return BLOCKCOLS;
+	}
+
+	public Brick getBrick(int row, int col) {
+		return bricks_[row][col];
+	}
+
+	public void clearBrick(int row, int col) {
+		if (bricks_[row][col] != null) {
+			bricks_[row][col] = null;
+			bricksLeft_--;
+			support_.firePropertyChange("repaint", null, this);
+		}
+	}
+
+	public int getBricksLeft() {
+		return bricksLeft_;
+	}
+
+	public Dimension2D getSize() {
+		return new Dimension2D(width_, height_);
+	}
+
+	public void pause() {
+		timer_.stop();
+	}
+
+	public void unpause() {
+		timer_.start();
+	}
+
+	public void stop() {
+		timer_.stop();
+	}
+
+	class BreakoutTimer extends AnimationTimer {
+		@Override
+		public void handle(long now) {
+			ball_.move();
+			if (target_ != -1) {
+				if (target_ < paddle_.getLeft() + paddle_.getWidth() / 2) {
+					movePaddleLeft();
+				} else if (target_ > paddle_.getRight() - paddle_.getWidth() / 2) {
+					movePaddleRight();
+				}
+			}
+
+			boolean bounced = false;
+
+			// bounce off the paddle
+			if (paddle_.isHitBy(ball_)) {
+				ball_.bounceY();
+				bounced = true;
+			}
+
+			// bounce off a brick (removing the brick)
+			for (int row = 0; row < BLOCKROWS && !bounced; row++) {
+				for (int col = 0; col < BLOCKCOLS && !bounced; col++) {
+					Brick brick = getBrick(row, col);
+					if (brick != null) {
+						int hit = brick.isHitBy(ball_);
+						if (hit == Brick.NONE) {
+							continue;
+						}
+						if (hit == Wall.LEFT || hit == Wall.RIGHT) {
+							ball_.bounceX();
+							bounced = true;
+						} else {
+							ball_.bounceY();
+							bounced = true;
+						}
+						if (brick.getHitsLeft() == 0) {
+							// TODO brick has been cleared
+							brick.decorate(ball_);
+							score_ += brick.getPoints();
+							clearBrick(row, col);
+						}
+					}
+				}
+			}
+			// System.out.println();
+
+			// bounce off a wall
+			for (Wall wall : walls_) {
+				int hit = wall.isHitBy(ball_);
+				if (hit == Wall.NONE) {
+					continue;
+				}
+				if (hit == Wall.LEFT || hit == Wall.RIGHT) {
+					ball_.bounceX();
+					bounced = true;
+				} else {
+					ball_.bounceY();
+					bounced = true;
+				}
+			}
+
+			if (bounced) {
+				// ball_.move();
+			}
+
+			// ball hit bottom
+			if (ball_.getY() + ball_.getRadius() > height_) {
+				if (ballsLeft_ == 0) {
+					support_.firePropertyChange("stop", null, this);
+				} else {
+					ballsLeft_--;
+					resetPaddle();
+				}
+			}
+
+			if (bricksLeft_ == 0) {
+				support_.firePropertyChange("stop", null, this);
+			}
+
+			support_.firePropertyChange("repaint", null, this);
+		}
+	}
+
+}

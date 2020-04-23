@@ -1,0 +1,10 @@
+package visitor;
+
+public class PrintVisitor implements ExpressionVisitor<String> {
+
+	@Override
+	public String visit(Expression exp) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

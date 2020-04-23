@@ -1,0 +1,67 @@
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+/**
+ * @author cu5988
+ *
+ */
+class StandardPenteTest {
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@BeforeEach
+	void setUp () throws Exception {}
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@AfterEach
+	void tearDown () throws Exception {}
+
+	@Test
+	void testFirstMoveCenter () {
+		Board board = new Board(19);
+		StandardPente rules = new StandardPente(board);
+		
+		boolean result = rules.validMove(10,10,1);
+		
+		assertTrue(result);
+	}
+	
+	@Test
+	void testFirstMoveNotCenter () {
+		Board board = new Board(19);
+		StandardPente rules = new StandardPente(board);
+		
+		boolean result = rules.validMove(1,10,1);
+		
+		assertTrue(!result);
+	}
+	
+	@Test
+	void testWin5Consec() {
+		Board board = new Board(19);
+		board.placeStone(1,1,1);
+		board.placeStone(2,2,1);
+		board.placeStone(1,1,2);
+		board.placeStone(2,2,4);
+		board.placeStone(1,1,3);
+		board.placeStone(2,2,6);
+		board.placeStone(1,1,4);
+		board.placeStone(2,2,7);
+		board.placeStone(1,1,5);
+		
+		StandardPente rules = new StandardPente(board);
+
+		boolean result = rules.gameOverCheckMove(1,1,5);
+		
+		 assertTrue(result);
+	}
+	
+	
+
+}

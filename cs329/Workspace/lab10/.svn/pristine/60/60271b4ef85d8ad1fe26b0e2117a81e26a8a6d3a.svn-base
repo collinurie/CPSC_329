@@ -1,0 +1,64 @@
+package application;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+
+public class GUIController {
+	
+	SystemController sysControll_;
+
+    @FXML
+    private Button knockknock_;
+
+    @FXML
+    private Button riddle_;
+
+    @FXML
+    private Button shutdown_;
+
+    @FXML
+    private TextArea display_ ;  // joke/riddle display area
+
+    @FXML
+    private TextField input_;   // input for user's answer to the riddle
+
+
+    public void setSystemController(SystemController sysController) {
+    	sysControll_ = sysController;
+    }
+    
+    @FXML
+    void getKnockKnock(ActionEvent event) {
+    		sysControll_.getKnockKnock();
+    	// get knock knock joke from server
+    }
+
+    @FXML
+    void getRiddle(ActionEvent event) {
+    	// get riddle from server
+    }
+
+    @FXML
+    void quit(ActionEvent event) {
+    	// quit program
+    }
+
+    @FXML
+    void sendAnswer(ActionEvent event) {
+    	// send user's answer to a riddle to the server
+    }
+
+    @FXML
+    void shutdown(ActionEvent event) {
+    	// shut down the server
+    }
+    
+    void displayKnockKnock(String message) {
+    	System.out.println(display_);
+    	display_.setText(message);
+    }
+
+}

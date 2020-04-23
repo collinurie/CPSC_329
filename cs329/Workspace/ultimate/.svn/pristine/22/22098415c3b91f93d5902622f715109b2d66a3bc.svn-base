@@ -1,0 +1,324 @@
+package Pente;
+
+import java.util.ArrayList;
+
+import Pente.PenteBoard;
+import Pente.Player;
+
+/**
+ * @author mb5053
+ */
+public class ComputerPlayer extends Player {
+
+	public static final int UP = 0;
+	public static final int UP_RIGHT = 1;
+	public static final int RIGHT = 2;
+	public static final int DOWN_RIGHT = 3;
+	public static final int DOWN = 4;
+	public static final int DOWN_LEFT = 5;
+	public static final int LEFT = 6;
+	public static final int UP_LEFT = 7;
+
+	public static final int[] colIterateVals = { 0, 1, 1, 1, 0, -1, -1, -1 };
+	public static final int[] rowIterateVals = { -1, -1, 0, 1, 1, 1, 0, -1 };
+
+	public ComputerPlayer ( String name ) {
+		super(name);
+		isComputer_ = true;
+		isNetwork_ = false;
+	}
+
+	public void setGame ( PenteGame game ) {
+		game_ = game;
+	}
+
+	public int[][] getBoardArray () {
+		return game_.getPenteBoard().getBoard();
+	}
+
+	public boolean handleUserInput ( Move move ) {
+		// This should never get called
+		System.out
+		    .println("You called the 'handleUserInput' method on a ComputerPlayer.\n This won't crash, but it also won't do anything either!");
+		return true;
+	}
+
+	public boolean gameIsWon () {
+		return game_.isWon();
+	}
+//	public Move getNextMove ( PenteBoard board, PenteGame game, Player player,
+//	                          Player opponent, int depth ) {
+//	int randRow = (int) (Math.random() * 19);
+//	int randCol = (int) (Math.random() * 19);
+//	return new Move(randRow, randCol, this);
+//	}
+	/**
+	 * Gets the next move for the player, looking depth moves ahead
+	 * 
+	 * @param board
+	 *          - Board being examined
+	 * @param game
+	 *          - game being played right not (needed to get rule variant)
+	 * @param player
+	 *          - Player making the move
+	 * @param opponent
+	 *          - Opponent player is playing against
+	 * @param depth
+	 *          - number of moves to look ahead
+	 * @return - The optimal move to make
+	 */
+	public Move getNextMove ( PenteBoard board, PenteGame game, Player player,
+	                          Player opponent, int depth ) {
+		Player.resetPlayerCount();
+		// Creates a copy of this and the opponent for testing
+		Player opp = new LocalPlayer("opponent");
+		opp.setCaptures(opponent.getCaptures());
+		Player me = new LocalPlayer("me");
+		me.setCaptures(this.getCaptures());
+
+		// Stores the player who's move it is, and their opponent
+		Player currentPlayer = me;
+		Player otherPlayer = opp;
+
+		// Creates a copy of this game (or close enough) to test with, so we don't
+		// mutate the actual game
+
+		PenteGame tempGame;
+
+		// Selects the cells that are worth looking at (those within 3 cells of an
+		// existing piece)
+		boolean[][] mask = generateMoveMask(board.getBoard(),2);
+		System.out.println("Mask: ");
+		for (int i = 0; i < mask.length; i++) {
+			for (int j = 0; j < mask[i].length; j++) {
+				System.out.print(mask[i][j] ? 1 : 0);
+			}
+			System.out.println();
+		}
+		// Create an empty array to store the grades for each potential move
+		int[][] grades = new int[mask.length][mask[0].length];
+		// For each possible move in grades
+		for ( int row = 0 ; row < board.getRows() ; row++ ) {
+			for ( int col = 0 ; col < board.getCols() ; col++ ) {
+				if ( mask[row][col] ) {
+					System.out.println("Checking " + row + " " + col);
+
+					tempGame = new PenteGame(me,opp,game.ruleType_);
+					// Set the temporary board with the current board state
+					tempGame.setBoard(board);
+					tempGame.setNumMoves(game.getNumMoves()+1);
+					System.out.println("Num moves: " + tempGame.getNumMoves());
+
+					// Attempt to make this possible move
+					boolean moved = tempGame.makePlayerMove(new Move(row,col,this));
+
+					if ( !moved ) {
+						// If it wasn't a valid move, make the score negative so it won't be
+						// chosen
+						grades[row][col] = -100;
+						System.out.println("That wasn't allowed.");
+					} else if ( tempGame.isWon() ) {
+						
+						// If the move results in a win, then make the grade high enough
+						// that it will be picked
+						grades[row][col] = 100;
+					} else {
+//						grades[row][col] = gradeBoard(tempGame.getPenteBoard());
+//						System.out.println(grades[row][col]);
+//						// Call this method again for the correct number of moves ahead,
+//						// swapping the player arguments to simulate an opposing move
+//						// Swap the roles of the players to simulate an opponent's move
+//						Player temp = currentPlayer;
+//						currentPlayer = otherPlayer;
+//						otherPlayer = temp;
+//
+//						// Get the opponent's optimal move and then make it
+//						if ( depth > 0 ) {
+//							Move nextMove = getNextMove(board,tempGame,currentPlayer,
+//							                            otherPlayer,depth - 1);
+//							tempGame.makePlayerMove(nextMove);
+//						}
+						// get the grade for the forward-looking board
+						grades[row][col] = gradeBoard(tempGame.getPenteBoard());
+					}
+					// Make this move on a fake board, and then grade it
+				} else {
+					// This is an invalid move
+					grades[row][col] = -100;
+				}
+			}
+		}
+		
+		return selectBestMoveFromGrades(grades,this);
+
+	}
+
+	/**
+	 * Traverses a 2D array of ints, and looks for the highest valued cell inside.
+	 * 
+	 * @param grades
+	 *          - Array of ints to be traversed
+	 * @param player
+	 *          - Player who should make the returned move
+	 * @return - A move represeting the optimal move
+	 */
+	private Move selectBestMoveFromGrades ( int[][] grades, Player player ) {
+		int currentMaxGrade = -1000;
+		ArrayList<Move> bestList = new ArrayList<Move>();
+		for ( int row = 0 ; row < grades.length ; row++ ) {
+			for ( int col = 0 ; col < grades[0].length ; col++ ) {
+				if ( grades[row][col] > currentMaxGrade ) {
+					currentMaxGrade = grades[row][col];
+
+					bestList.clear();
+					bestList.add(new Move(row, col, player));
+				} else if (grades[row][col] == currentMaxGrade) {
+					bestList.add(new Move(row, col, player));
+				}
+				System.out.print(grades[row][col] + " ");
+			}
+			System.out.println();
+		}
+		Move result = bestList.get((int) (Math.random() * (bestList.size()-1)));
+		System.out.println("I want to move to: (" + result.getRow() + ", " + result.getCol() + "). It's score is: " + currentMaxGrade);
+		return result;
+	}
+
+	/**
+	 * Grades an entire PenteBoard
+	 * 
+	 * @param board
+	 *          - board to be graded
+	 * @return - an integer that represents how 'good' the board is. The higher
+	 *         the number, the better the board state.
+	 */
+	private int gradeBoard ( PenteBoard board ) {
+		int score = 0;
+		for ( int row = 0 ; row < board.getRows() ; row++ ) {
+			for ( int col = 0 ; col < board.getCols() ; col++ ) {
+				score += getLocationScore(board,row,col);
+			}
+		}
+		return score;
+	}
+
+	/**
+	 * Gets the grade of a specific location on the board
+	 * 
+	 * @param board
+	 *          - PenteBoard being looked at
+	 * @param row
+	 *          - Row index being examined
+	 * @param col
+	 *          - Column index being examined
+	 * @return - Grade of that location
+	 */
+	private int getLocationScore ( PenteBoard board, int row, int col ) {
+		int[] directionGrades = new int[8];
+		int currentPiece = board.getPosition(row,col);
+		if ( currentPiece == 0 ) {
+			return 0;
+		}
+		for ( int i = 0 ; i < rowIterateVals.length ; i++ ) {
+			int depth = 0;
+			int locVal = currentPiece;
+			while ( locVal == currentPiece ) {
+				depth++;
+				locVal = board.getPosition(row + rowIterateVals[i] * depth,
+				                           col + colIterateVals[i] * depth);
+			}
+			locVal = board.getPosition(row + rowIterateVals[i] * (depth + 1),
+			                           col + colIterateVals[i] * (depth  +1));
+			if (locVal != currentPiece && locVal != 0) {
+				depth = 0;
+			}
+			directionGrades[i] = depth;
+		}
+		int verticalGrade =
+		    weightChain(directionGrades[UP] + directionGrades[DOWN]);
+		int horizontalGrade =
+		    weightChain(directionGrades[LEFT] + directionGrades[RIGHT]);
+		int diagUpGrade =
+		    weightChain(directionGrades[UP_RIGHT] + directionGrades[DOWN_LEFT]);
+		int diagDownGrade =
+		    weightChain(directionGrades[UP_LEFT] + directionGrades[DOWN_RIGHT]);
+
+		return (currentPiece == getPieceNum() ? 1 : (-2))
+		    * (verticalGrade + horizontalGrade + diagDownGrade + diagUpGrade);
+	}
+
+	/**
+	 * Returns a grade for a chain of pieces of a given length. Used to set the
+	 * weighting on how valuable different chain-lengths are.
+	 * 
+	 * @param chainLength
+	 * @return
+	 */
+	private int weightChain ( int chainLength ) {
+		if ( chainLength == 1 ) {
+			return 1;
+		} else if ( chainLength == 2 ) {
+			return 2;
+		} else if ( chainLength == 3 ) {
+			return 3;
+		} else if ( chainLength == 4 ) {
+			return 4;
+		} else if ( chainLength > 5 ) {
+			return 100;
+		} else {
+			return 0;
+		}
+	}
+
+	/**
+	 * Generates a boolean mask that uncovers only cells that are within the given
+	 * range of a non-empty cell
+	 * 
+	 * @param board
+	 *          - board being looked at
+	 * @return a mask where, if true, there is a non-zero value within the range
+	 *         of each cell, and false if there isn't
+	 */
+	private boolean[][] generateMoveMask ( int[][] board, int range ) {
+		boolean[][] mask = new boolean[board.length][board[0].length];
+		for ( int row = 0 ; row < mask.length ; row++ ) {
+			for ( int col = 0 ; col < mask[row].length ; col++ ) {
+				if ( cellIsWithinRange(board,row,col,range) ) {
+					mask[row][col] = true;
+				}
+				if (board[row][col] != 0) {
+					mask[row][col] = false;
+				}
+			}
+		}
+		return mask;
+
+	}
+
+	/**
+	 * Determines if there is a non-zero value within the given range of a cell in
+	 * a 2D array
+	 * 
+	 * @param board
+	 * @param row
+	 * @param col
+	 * @param range
+	 * @return
+	 */
+	private boolean cellIsWithinRange ( int[][] board, int row, int col,
+	                                    int range ) {
+		for ( int i = row - range  ; i < row + range + 1 ; i++ ) {
+			for ( int j = col - range  ; j < col + range + 1 ; j++ ) {
+				try {
+					if ( board[i][j] != 0 ) {
+						return true;
+					}
+				} catch ( ArrayIndexOutOfBoundsException e ) {
+					continue;
+				}
+			}
+		}
+		return false;
+	}
+
+}

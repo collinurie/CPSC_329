@@ -1,0 +1,102 @@
+package network;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+import Pente.LocalPlayer;
+import Pente.Move;
+import Pente.PenteGame;
+import Pente.Player;
+
+public class ClientHandler implements Runnable {
+
+	Socket connection;
+	PrintWriter out;// = new PrintWriter(new OutputStreamWriter(connection.getOutputStream()));
+	BufferedReader in;// = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+	public ClientHandler (Socket connection) throws IOException {
+		this.connection = connection;
+		out = new PrintWriter(new OutputStreamWriter(connection.getOutputStream()));
+		in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+	}
+
+	@Override
+	public void run () {
+		try {
+			//PrintWriter out = new PrintWriter(new OutputStreamWriter(connection.getOutputStream()));
+			//BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			//handshake
+			String read = in.readLine();//pente
+			System.out.println(read);
+			if (read.equals("pente")) {
+				out.println("pente");
+			//send player number
+				boolean pl1 = false;
+				if (Server.game_.p1_ == null) {
+					pl1 = true;
+					out.println("one");
+					}
+				else if (Server.game_.p2_ == null) {out.println("two");}
+				else {out.println("full");}
+				if (pl1) {
+					read = in.readLine(); //reads game type if player is p1
+					LocalPlayer p1 = new LocalPlayer("p1");
+					LocalPlayer p2 = new LocalPlayer("p2");
+					int gt = Integer.parseInt(read);
+					Server.game_ = new PenteGame(p1,p2,gt);
+					p1.setGame(Server.game_);
+					p2.setGame(Server.game_);
+				}
+			}
+			else if (read.charAt(0) == 'R') {
+			//read = in.readLine();//R#C#P#
+				int row = 0;
+				int col = 0;
+				int pNum = 0;
+				for (int i = 0; i < read.length(); i++) {
+					if (read.charAt(i) == 'R') {
+						row = Integer.parseInt(read, i+1);
+						++i;
+					}
+					if (read.charAt(i) == 'C') {
+						col = Integer.parseInt(read, i+1);
+						++i;
+					}
+					if (read.charAt(i) == 'P') {
+						pNum = Integer.parseInt(read, i+1);
+						++i;
+					}
+				}
+
+				Player temp;
+				if(pNum == Server.game_.getPlayers()[0].getPieceNum()) {
+					temp = Server.game_.getPlayers()[0];
+				} else {
+					temp = Server.game_.getPlayers()[1];
+				}
+				Move test = new Move(row, col, temp);
+				out.println(validateAndMove(test));
+			}
+				
+				
+				
+			//}
+			
+		} catch ( IOException e ) {
+			System.out.println("Error");
+			e.printStackTrace();
+		}
+		
+	}
+
+	public static String validateAndMove(Move m) {
+		if(Server.game_.getRules().makeMove(m.getPlayer(),m.getRow(),m.getCol())) {
+			return "success";
+		}
+		return "failure";
+	} 
+
+}

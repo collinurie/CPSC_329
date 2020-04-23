@@ -1,0 +1,44 @@
+ @startuml
+ actor Client
+ activate PenteServer
+ NetworkPlayer <- Client : initialize object
+ activate NetworkPlayer 
+ SpectatorListener <- Client: initialize object
+ activate SpectatorListener
+ NetworkPlayer -> PenteServer : open connection
+ PenteServer -> PlayerTask : initialize object 
+ activate PlayerTask
+ PenteServer -> SpectatorTask : initialize object
+ activate SpectatorTask
+ SpectatorListener <-> SpectatorTask : handshake
+ PlayerTask <-> NetworkPlayer: handshake
+ PlayerTask -> NetworkPlayer: pass playerNumber, get game type
+ Client -> NetworkPlayer : handleUserInput()
+ NetworkPlayer -> PlayerTask : send move
+ PlayerTask -> PenteServer : game.makePlayerMove()
+ alt Valid Move
+ 	PenteServer -> PlayerTask: updated board
+ 	PlayerTask -> NetworkPlayer : success
+ 	PlayerTask -> NetworkPlayer : new board
+ 	PlayerTask -> SpectatorTask : notify all spectators
+ 	SpectatorTask -> SpectatorListener : new scores, board, and wins
+ 	SpectatorListener -> Client : updates to canvas
+ 	NetworkPlayer -> Client : new board with move
+ else Invalid Move
+ 	PenteServer -> PlayerTask : bad move
+ 	PlayerTask -> NetworkPlayer : bad move
+ end
+ Client -> NetworkPlayer : shutdown()
+ Client -> SpectatorListener : shutdown()
+ deactivate SpectatorListener
+ NetworkPlayer -> PlayerTask : shutdown message
+ deactivate NetworkPlayer
+ PlayerTask -> PenteServer: shutdown message
+ PenteServer -> PlayerTask : all tasks stop
+ deactivate PlayerTask
+ PenteServer -> SpectatorTask : all tasks stop
+ deactivate SpectatorTask
+ deactivate PenteServer
+ participant PenteServer
+ @enduml
+ 

@@ -1,0 +1,91 @@
+package network;
+
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import Pente.*;
+/**
+ * @author ys6270
+ *
+ */
+public class Server {
+
+	volatile private static boolean shutdown_;
+	private static int port;
+	volatile public static PenteGame game_;
+	private static PrintWriter out;
+	private static BufferedReader in;
+
+	//TODO:
+	//initial connections from servers and players
+	//quitting
+	//valid move	
+
+	//send updated board
+	//or not valid move
+	//or someone won
+
+	public static void main (String args[]) throws InterruptedException, IOException {
+		ArrayList<Thread> threads = new ArrayList<Thread>();
+		port = 14457; //i'm trusting Max on this
+		ServerSocket server = new ServerSocket(port);
+		boolean x = false;
+		//Loop to keep server running
+		while ( !shutdown_ ) {
+			try {
+				//Set up connection
+				if (server != null) {
+					System.out.println("Waiting for connection.");
+					Socket connection = server.accept();
+					System.out.println("Connection established");
+
+					// obtaining input and out streams 
+					out = new PrintWriter(new OutputStreamWriter(connection.getOutputStream()));
+					in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+					// create a new thread object
+					Thread t = new Thread(new ClientHandler(connection)); 
+					threads.add(t);
+					// Invoking the start() method 
+					t.start(); 
+				}
+				if (threads.size() >= 2 && !x) {
+					server.close();
+					System.out.println("Server full.");
+					x = true;
+				}
+				
+			} catch ( IOException e ) {
+				System.out.println("I/O error: "+e.getMessage());
+				shutdown();
+				try {
+					server.close();
+				} catch ( IOException e1 ) {
+					System.out.println("I/O error: "+e.getMessage());
+				}
+			}
+		}
+	}
+
+	public static void shutdown() {
+		shutdown_ = true;
+	}
+
+	public void setSocketNum(int num) {
+		port = num;
+	}
+
+
+	public String sendBoard() {
+		return Arrays.toString(game_.getPenteBoard().getBoard());
+	}
+
+}

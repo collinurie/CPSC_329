@@ -1,0 +1,60 @@
+package Pente;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+/**
+ * @author mb5053
+ *
+ */
+public class NetworkPlayer extends Player {
+	
+	private PrintWriter writer_;
+	private BufferedReader reader_;
+	private String IP_;
+	private int port_;
+//	/**
+//	 * @param name
+//	 */
+//	protected NetworkPlayer ( String name ) {
+//		super(name);
+//		isComputer_ = false;
+//		// needs to connect to server:
+//		//	Create Reader
+//		//	Create Writer
+//	}
+	
+
+	public NetworkPlayer (String name, String IP, int port) throws IOException {
+		super(name);
+		isComputer_ = false;
+		IP_ = IP;
+		port_ = port;
+		Socket connection = new Socket(IP_, port_);
+		writer_ = new PrintWriter(new OutputStreamWriter(connection.getOutputStream()));
+		reader_ = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+	}
+
+	@Override
+	public void handleUserInput (Move move) {
+		try {
+			writer_.println("R" + move.getRow() + "C" + move.getCol() + "P" + move.getPlayer().getPieceNum());
+			String response = reader_.readLine();
+			if ( response.equals("success")) {
+				// recieve the board from the server
+				// send that board to the GUI
+			} else if (response.equals("fail")) {
+				// Update the GUI saying we got an invalid move
+			}
+		} catch (IOException e) {
+			// Leave this empty, means we just wait for more user input
+		}
+
+	}
+	
+
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CommitComments>	<CommitComment>UPDATING: no problems resolved since last commit. </CommitComment>
+	<CommitComment>Added decorate call when a brick is hit. </CommitComment>
+	<CommitComment>Put some ResizerBricks into the game. </CommitComment>
+	<CommitComment>Collin Urie 
+Andrew Koonz</CommitComment>
+	<CommitComment>Completed shared variables and shared objects section of the lab. </CommitComment>
+	<CommitComment>added tag folder.</CommitComment>
+	<CommitComment>Collin Urie
+Andrew Koonz</CommitComment>
+	<CommitComment>Finished attaching the GUIController to SystemController.</CommitComment>
+	<CommitComment>Added writeup text file.</CommitComment>
+	<CommitComment>Added shutdown method and polite shutdown. Also made the server exit after 10 seconds of the shutdown being initiated even if threads were still running. </CommitComment>
+</CommitComments>

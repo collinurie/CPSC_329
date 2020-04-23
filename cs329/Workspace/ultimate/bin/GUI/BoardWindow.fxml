@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import GUI.BoardCustomCanvas?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Polygon?>
+
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.BoardWindowController">
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="Options">
+          <items>
+                  
+                  <MenuItem mnemonicParsing="false" onAction="#restart" text="Rules" />
+            <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+      <BorderPane fx:id="borderPane" onMouseReleased="#boxedClicked" prefHeight="378.0" prefWidth="640.0">
+         <bottom>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Black Player     Stones Captured:">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="player1Score" text="0">
+                     <HBox.margin>
+                        <Insets right="20.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Polygon fx:id="leftArrow" fill="#1dd105" points="36.0, -12.0, 51.0, 1.0, 51.0, -25.0" stroke="BLACK" strokeType="INSIDE" />
+                  <Polygon fx:id="rightArrow" fill="#959696" points="36.0, -12.0, 51.0, 1.0, 51.0, -25.0" rotate="180.0" stroke="BLACK" strokeType="INSIDE">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin>
+                  </Polygon>
+                  <Label text="White Player     Stones Captured:">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="player2Score" text="0" />
+               </children>
+            </HBox>
+         </bottom>
+         <center>
+           
+         </center>
+         <center>
+            <BoardCustomCanvas fx:id="boardCanvas" BorderPane.alignment="CENTER" />
+         </center>
+      </BorderPane>
+  </children>
+</VBox>

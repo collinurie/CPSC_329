@@ -1,0 +1,7 @@
+Collin Urie 
+Andrew Koonz
+
+Why can't accept be implemented in BinaryOperator instead?
+
+	Because when the program is run , even though it compiles, it will throw a runtime error. Since the visit 
+	methods in the visitors all are programmed with specific operations and not any single generic binary operator.

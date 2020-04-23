@@ -1,0 +1,6 @@
+package visitor;
+
+public interface ExpressionVisitor<T> {
+    public T visit (Expression exp);
+
+ }

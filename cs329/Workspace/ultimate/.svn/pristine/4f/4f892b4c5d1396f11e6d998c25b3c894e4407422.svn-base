@@ -1,0 +1,40 @@
+package GUI;
+
+/**
+ * @author ak5158
+ *
+ */
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
+
+public class WaitingScreenController {
+
+
+	@FXML
+	private Label waitingLabel;
+
+	@FXML
+	// creates the loading dots 
+	void loadDots(MouseEvent event) {
+
+//		try {
+//			while (true) {
+//				waitingLabel.setText(".");
+//				Thread.sleep(250);
+//				waitingLabel.setText("..");
+//				Thread.sleep(250);
+//				waitingLabel.setText("...");
+//				Thread.sleep(250);
+//				if (waitingLabel.getText().contains("...")) {
+//					waitingLabel.setText("");
+//				}
+//			}
+//		} catch ( InterruptedException e ) {
+//			e.printStackTrace();
+//		}
+//
+	}
+}
+
+

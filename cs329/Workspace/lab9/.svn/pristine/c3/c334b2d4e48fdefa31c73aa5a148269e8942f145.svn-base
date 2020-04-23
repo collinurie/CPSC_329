@@ -1,0 +1,9 @@
+Collin Urie
+Andrew Koonz
+
+We have no shared variables in our code, the only variable that can be edited
+from a separate class is the instance variable shutdown_ in the JokeServer class.
+There is no concern about a race condition with the shutdown variable because it can only 
+be adjusted by the shutdown client and the shutdown method sets the shutdown_ variable to
+false no matter what the current value is, this means that there will not be any confusion 
+about the variables value even if multiole clients are connecting at the same time. 

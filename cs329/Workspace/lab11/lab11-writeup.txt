@@ -1,0 +1,33 @@
+Collin Urie 
+~ Andrew Koonz
+
+Shared Variables: 
+	
+	open_ - different threads could try to open the door. This could result
+			in it being opened or closed when it is supposed to do the opposite. 
+	up_ - this value is set in both up() and down() and can be called from several threads
+			at a time so this variable needs protection. 
+	floor_ - this value can be altered in both the up and down methods and those can be 
+				be called at the same time from different threads. 
+	
+Shared Objects: 
+	Elevator  - the passenger_ object within elevator is used within the elevator class which is used in
+					multiple threads and can be be assigned different values in those
+					different threads. 
+	Building - the same Building Object is passed to both Simulation classes which arecreated
+				and run as several different threads.
+				
+Race Conditions:
+	idle method in Elevator - the idle method has a race condition when it is reading though the buttons
+			to check if any of them have been pressed. A separate thread could have pushed a button at the same 
+			time and it might not be recognized by the idle method so it could return true even though a button
+			has been pressed. 
+	summon & enter method in PersonSim - when summon is called there is a check done to see if the person 
+			summoning the elevator can fit. Then  there is not a second check in order to make sure that there 
+			is still room when the other method is called. In between those two calls another thread could fill up 
+			that elevator since that Elevator object is shared among other person threads.
+	run method in ElevatorSim - the run method has a race condition when it checks if the elevator is idle. Between
+			when the method checks if it idle and when the method tells the elevator to wait, another thread could
+			have made the elevator not idle. This is a race condition because now the method cannot arrive at the
+			assumptions (the elevator has a destination) that it is expecting there to be. 
+	

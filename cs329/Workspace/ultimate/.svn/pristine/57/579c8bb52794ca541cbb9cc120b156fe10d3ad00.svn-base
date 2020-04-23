@@ -1,0 +1,127 @@
+package GUI;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.Pane;
+import javafx.scene.control.ButtonType;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+
+public class BoardCustomCanvas extends Canvas {
+	private int boardSize_ = 19;
+	private int[][] boardArr_;
+
+	public BoardCustomCanvas () {
+		super();
+		boardArr_ = new int[boardSize_][boardSize_];
+		this.setWidth(760);
+		this.setHeight(760);
+		buildGrid();
+		this.setOnMousePressed( e -> {
+			int player;
+			double clickX = e.getX()-20;
+			double clickY = e.getY()-20;
+			int boardX = (int) Math.round((clickX/40));
+			int boardY = (int) Math.round((clickY/40));
+						
+		});
+	}
+
+	private void buildGrid () {
+		GraphicsContext g = this.getGraphicsContext2D();
+		g.setFill(Color.DARKGREEN);
+		g.fillRect(0,0,760,760);
+		g.setFill(Color.LAWNGREEN);
+		g.fillRect(20,20,720,720);
+		g.setFill(Color.LIGHTGREEN);
+		g.fillRect(280,280,200,200);
+		g.setFill(Color.BLACK);
+		g.fillOval(375,375,10,10);
+		for ( int i = 20 ; i <= 740 ; i = i + 40 ) {
+			g.setStroke(Color.BLACK);
+			g.strokeLine(i,740,i,20);
+		}
+		for ( int i = 20 ; i <= 740 ; i = i + 40 ) {
+			g.setStroke(Color.BLACK);
+			g.strokeLine(740,i,20,i);
+		}
+	}
+	
+	public void updateBoard(int x, int y, int player) {
+		boardArr_[x][y] = player;
+	}
+	
+	public int[][] getBoard(){
+		return boardArr_;
+	}
+
+	public void paintBoard ( int[][] b ) {
+		GraphicsContext g = this.getGraphicsContext2D();
+		g.setFill(Color.TRANSPARENT);
+		g.fillRect(0,0,760,760);
+		buildGrid();
+		for ( int i = 0 ; i < b.length ; i++ ) {
+			for ( int j = 0 ; j < b.length ; j++ ) {
+				int stone = b[i][j];
+				if ( stone != 0 ) {
+					if ( stone == 1 ) {
+						g.setFill(Color.BLACK);
+					} else {
+						g.setFill(Color.WHITE);
+					}
+					g.fillOval((j * 40),(i * 40),40,40);
+				}
+			}
+		}
+
+	}
+	
+	public void updateScores(int p1, int p2){
+		
+		
+	}
+
+	public void showGameOver ( int winner ) throws IOException {
+		String color = "Black";
+		if ( winner == 2 ) {
+			color = "White";
+		}
+
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Game Over!");
+		alert.setHeaderText(color + " has won!");
+		alert.setContentText("Choose your option.");
+
+		ButtonType buttonTypeOne = new ButtonType("Restart");
+		ButtonType buttonTypeTwo = new ButtonType("Quit to Mian Menu");
+
+		alert.getButtonTypes().setAll(buttonTypeOne,buttonTypeTwo);
+
+		Optional<ButtonType> result = alert.showAndWait();
+		if ( result.get() == buttonTypeOne ) {
+			FXMLLoader loader =
+			    new FXMLLoader(getClass().getResource("BoardWindow.fxml"));
+			Scene boardScene = new Scene(loader.load());
+			Stage stage = (Stage) this.getScene().getWindow();
+			stage.setScene(boardScene);
+			stage.setResizable(false);
+			stage.show();
+		} else if ( result.get() == buttonTypeTwo ) {
+			Pane welcomePane =
+			    (Pane) FXMLLoader.load(getClass().getResource("HomeWindow.fxml"));
+			Scene welcomeScene = new Scene(welcomePane);
+
+			Stage stage = (Stage) this.getScene().getWindow();
+			stage.setScene(welcomeScene);
+			stage.show();
+
+		}
+	}
+}

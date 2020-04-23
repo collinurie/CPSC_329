@@ -1,0 +1,26 @@
+Solo Player against CPU
+
+@startuml
+start
+floating note left: Start Local VS CPU
+repeat :Start menu;
+:Select Local Player & Game Type;
+:Select Play;
+ fork
+ 	repeat   :play move;
+   :AI plays move;
+   repeat while (Game Won?) is (no)
+   ->yes;
+ fork again
+   :Help;
+   :Close help;
+   detach
+ fork again
+	:Quit;
+	
+   	detach
+ endfork
+repeat while (Win Screen) is (New Game)
+->quit;
+ stop
+@enduml

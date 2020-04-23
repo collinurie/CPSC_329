@@ -1,0 +1,56 @@
+package test1;
+
+public class PenteBoard {
+
+	public static final int NUMROWS = 19, NUMCOLS = 19;
+	
+	public int grid_[][];
+	private int n_;
+	
+	private int capture(int x, int y, int color) {
+		n_ = 0;
+		
+		int otherColor; // the color that is being captured 
+		if(color == 1) {otherColor = 2;}
+		else { otherColor = 1;}
+		
+		if(y +3 < NUMROWS && grid_[y][x]==color && grid_[y+1][x]==otherColor
+				&& grid_[y+2][x]==otherColor && grid_[y+3][x]==color) {
+			grid_[y+1][x] = 0;
+			grid_[y+2][x] = 0;
+			n_++;
+		}
+		if(y +3 < NUMROWS && x+3 < NUMCOLS && grid_[y][x]==color && grid_[y+1][x+1]==otherColor
+				&& grid_[y+2][x+2]==otherColor && grid_[y+3][x+3]==color) {
+			grid_[y+1][x+1] = 0;
+			grid_[y+2][x+2] = 0;
+			n_++;
+		}
+		if(y +3 < NUMROWS && grid_[y][x]==color && grid_[y][x+1]==otherColor
+				&& grid_[y][x+2]==otherColor && grid_[y][x+3]==color) {
+			grid_[y][x+1] = 0;
+			grid_[y][x+2] = 0;
+			n_++;
+		}
+		if(y - 3 >= 0 && x+3 < NUMCOLS && grid_[y][x]==color && grid_[y- 1][x+1]==otherColor
+				&& grid_[y-2][x+2]==otherColor && grid_[y- 3][x+3]==color) {
+			grid_[y-1][x+1] = 0;
+			grid_[y-2][x+2] = 0;
+			n_++;
+		}
+		if(y - 3 >= 0 && grid_[y][x]==color && grid_[y- 1][x]==otherColor
+				&& grid_[y-2][x]==otherColor && grid_[y- 3][x]==color) {
+			grid_[y-1][x] = 0;
+			grid_[y-2][x] = 0;
+			n_++;
+		}
+		
+		return 0;
+	}
+	
+	
+	public void checkCaptures(){
+		
+	}
+	
+}

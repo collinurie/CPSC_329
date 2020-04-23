@@ -1,0 +1,130 @@
+package Pente;
+
+import Pente.PenteBoard;
+import Pente.Player;
+
+/**
+ * @author mb5053
+ */
+public class ComputerPlayer extends Player {
+
+	public static final int UP = 0;
+	public static final int UP_RIGHT = 1;
+	public static final int RIGHT = 2;
+	public static final int DOWN_RIGHT = 3;
+	public static final int DOWN = 4;
+	public static final int DOWN_LEFT = 5;
+	public static final int LEFT = 6;
+	public static final int UP_LEFT = 7;
+
+	public static final int[] colIterateVals = { 0, 1, 1, 1, 0, -1, -1, -1 };
+	public static final int[] rowIterateVals = { -1, -1, 0, 1, 1, 1, 0, -1 };
+
+	public ComputerPlayer ( String name ) {
+		super(name);
+		isComputer_ = true;
+	}
+
+	public void handleUserInput (Move move) {
+		// This should never get called
+	}
+	
+	public Move getNextMove(PenteBoard board) {
+	// Look at the board
+			// Grade the board based on how good it is for you
+			int currentGrade = gradeBoard(board);
+			int[][] currentBoardState = board.getBoard();
+			for ( int row = 0 ; row < board.getRows() ; row++ ) {
+				for ( int col = 0 ; col < board.getCols() ; col++ ) {
+					
+				}
+			}
+
+			// Generate all of the possible boards looking X moves ahead
+			// Grade all of those
+			// Pick the branch with the highest grade, and return that move
+			return new Move(0,0, this);
+	}
+
+	/**
+	 * Grades an entire PenteBoard
+	 * 
+	 * @param board
+	 *          - board to be graded
+	 * @return - an integer that represents how 'good' the board is. The higher
+	 *         the number, the better the board state.
+	 */
+	private int gradeBoard ( PenteBoard board ) {
+		int score = 0;
+		for ( int row = 0 ; row < board.getRows() ; row++ ) {
+			for ( int col = 0 ; col < board.getCols() ; col++ ) {
+				score += getLocationScore(board,row,col);
+			}
+		}
+		return score;
+	}
+
+	/**
+	 * Gets the grade of a specific location on the board
+	 * 
+	 * @param board
+	 *          - PenteBoard being looked at
+	 * @param row
+	 *          - Row index being examined
+	 * @param col
+	 *          - Column index being examined
+	 * @return - Grade of that location
+	 */
+	private int getLocationScore ( PenteBoard board, int row, int col ) {
+		int[] directionGrades = new int[8];
+		int currentPiece = board.getPosition(row,col);
+		if ( currentPiece == 0 ) {
+			return 0;
+		}
+		for ( int i = 0 ; i < rowIterateVals.length ; i++ ) {
+			int depth = 0;
+			int locVal = currentPiece;
+			while ( locVal == currentPiece ) {
+				depth++;
+				locVal = board.getPosition(row + rowIterateVals[i] * depth,
+				                           col + colIterateVals[i] * depth);
+			}
+			directionGrades[i] = depth;
+		}
+		int verticalGrade =
+		    weightChain(directionGrades[UP] + directionGrades[DOWN]);
+		int horizontalGrade =
+		    weightChain(directionGrades[LEFT] + directionGrades[RIGHT]);
+		int diagUpGrade =
+		    weightChain(directionGrades[UP_RIGHT] + directionGrades[DOWN_LEFT]);
+		int diagDownGrade =
+		    weightChain(directionGrades[UP_LEFT] + directionGrades[DOWN_RIGHT]);
+
+		return (currentPiece == getPieceNum() ? 1 : -1)
+		    * (verticalGrade + horizontalGrade + diagDownGrade + diagUpGrade);
+	}
+
+	/**
+	 * Returns a grade for a chain of pieces of a given length. Used to set the
+	 * weighting on how valuable different chain-lengths are.
+	 * 
+	 * @param chainLength
+	 * @return
+	 */
+	private int weightChain ( int chainLength ) {
+		if ( chainLength == 1 ) {
+			return 1;
+		} else if ( chainLength == 2 ) {
+			return 2;
+		} else if ( chainLength == 3 ) {
+			return 3;
+		} else if ( chainLength == 4 ) {
+			return 4;
+		} else if ( chainLength > 5 ) {
+			return 100;
+		} else {
+			return 0;
+		}
+	}
+
+}

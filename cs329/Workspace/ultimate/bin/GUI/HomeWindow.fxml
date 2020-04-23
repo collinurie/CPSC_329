@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="800.0" style="-fx-background-color: #0e7300;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.HomeWindowController">
+   <children>
+      <VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0">
+         <children>
+            <Text fill="#ababab" strokeType="OUTSIDE" strokeWidth="0.0" text="ULTIMATE ">
+               <font>
+                  <Font size="120.0" />
+               </font>
+               <effect>
+                  <DropShadow />
+               </effect>
+               <VBox.margin>
+                  <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+               </VBox.margin>
+            </Text>
+            <Text fill="#ababab" strokeType="OUTSIDE" strokeWidth="0.0" text=" PENTE">
+               <font>
+                  <Font size="120.0" />
+               </font>
+               <effect>
+                  <DropShadow />
+               </effect>
+               <VBox.margin>
+                  <Insets bottom="50.0" right="50.0" />
+               </VBox.margin>
+            </Text>
+            <HBox alignment="CENTER" prefHeight="145.0" prefWidth="800.0">
+               <children>
+                  <Circle radius="54.0" stroke="BLACK" strokeType="INSIDE">
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin>
+                     <effect>
+                        <DropShadow color="WHITE" />
+                     </effect>
+                  </Circle>
+                  <Button fx:id="playButton" mnemonicParsing="false" onAction="#startGame" text="Play ">
+                     <font>
+                        <Font size="30.0" />
+                     </font>
+                     <effect>
+                        <DropShadow />
+                     </effect>
+                  </Button>
+                  <Circle fill="WHITE" layoutX="254.0" layoutY="83.0" radius="54.0" stroke="WHITE" strokeType="INSIDE">
+                     <HBox.margin>
+                        <Insets left="30.0" />
+                     </HBox.margin>
+                     <effect>
+                        <DropShadow />
+                     </effect>
+                  </Circle>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <HBox alignment="CENTER" layoutY="600.0" prefHeight="145.0" prefWidth="800.0" spacing="50.0">
+         <children>
+            <MenuButton fx:id="playerOptionsButton" mnemonicParsing="false" style="-fx-background-color: #ffffff;" text="2 Player Local" textAlignment="CENTER">
+              <items>
+                  <MenuItem fx:id="onePlayerOption" onAction="#setOnePlayer" text="1 Player Local" />
+                  <MenuItem fx:id="onePlayerOnlineOption" onAction="#setOnePlayerOnline" text="1 Player Online" />
+                  <MenuItem fx:id="twoPlayerOption1" onAction="#setTwoPlayer" text="2 Player Local" />
+                  <MenuItem fx:id="spectateOption" onAction="#setSpectate" text="Spectate" />
+              </items>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+               </padding>
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <effect>
+                  <DropShadow />
+               </effect>
+            </MenuButton>
+            <MenuButton fx:id="rulesOptionButton" mnemonicParsing="false" style="-fx-background-color: #000000;" text="Standard Pente" textAlignment="CENTER" textFill="WHITE">
+              <items>
+                  <MenuItem fx:id="standardRuleOption" onAction="#setRulesStandard" text="Standard Pente" />
+                  <MenuItem fx:id="tournametRuleOption" onAction="#setRulesTournament" text="Tournament" />
+                  <MenuItem fx:id="freestyleRuleOption" onAction="#setRulesFreestyle" text="Freestyle" />
+                  <MenuItem fx:id="fiveInARoweRuleOption" mnemonicParsing="false" onAction="#setRulesFiveInARow" text="Five In A Row" />
+                  <MenuItem fx:id="gomakuCaroRuleOption" mnemonicParsing="false" onAction="#setRulesGomakuCaro" text="Gomaku Caro" />
+                  <MenuItem fx:id="gomakuFreestyleRuleOption" mnemonicParsing="false" onAction="#setRulesGomakuFreestyle" text="Gomaku Freestyle" />
+                  <MenuItem fx:id="gomakuStandardRuleOption" mnemonicParsing="false" onAction="#setRulesGomakuStandard" text="Gomaku Standard" />
+                  <MenuItem fx:id="KeryoRuleOption" mnemonicParsing="false" onAction="#setRulesKeryo" text="Keryo" />
+              </items>
+               <padding>
+                  <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+               </padding>
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <effect>
+                  <DropShadow color="WHITE" />
+               </effect>
+            </MenuButton>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+      <MenuBar layoutX="1.0" prefHeight="29.0" prefWidth="800.0">
+        <menus>
+          <Menu mnemonicParsing="false" onAction="#showAbout" text="Options">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </children>
+   <effect>
+      <Blend />
+   </effect>
+</Pane>

@@ -1,0 +1,135 @@
+package ruleSets;
+
+import java.util.ArrayList;
+
+import Pente.PenteBoard;
+import Pente.Player;
+import captureCheckers.CaptureChecker;
+import moveCheckers.MoveChecker;
+import winConditions.WinCondition;
+
+/**
+ * @author mb5053 Abstract class to represent possible sets of rules.
+ */
+public abstract class RuleSet {
+
+	protected boolean isWon_;
+	private int numMoves_;
+	private PenteBoard board_;
+
+	protected ArrayList<WinCondition> winConditions_;
+	protected ArrayList<MoveChecker> moveCheckers_;
+	protected ArrayList<CaptureChecker> captureCheckers_;
+
+	/**
+	 * Public constructor for the RuleSet class
+	 * 
+	 * @param board
+	 *          - board being used for the game
+	 */
+	public RuleSet ( PenteBoard board ) {
+		isWon_ = false;
+		numMoves_ = 0;
+		board_ = board;
+		moveCheckers_ = new ArrayList<MoveChecker>();
+		winConditions_ = new ArrayList<WinCondition>();
+		captureCheckers_ = new ArrayList<CaptureChecker>();
+	}
+
+	/**
+	 * Attempts to make a move on a Pente Board.
+	 * 
+	 * @param player
+	 *          - Player making the move
+	 * @param board
+	 *          - Board the move is being applied to
+	 * @param row
+	 *          - row index of the piece
+	 * @param col
+	 *          - col index of the piece
+	 * @return True if move can be made, False otherwise
+	 */
+	public boolean makeMove ( Player player, int row, int col ) {
+		// Check if move is valid
+		if ( !checkIsValidMove(player,row,col) ) {
+			return false;
+		}
+		// Make the Move (place the piece, increment number of moves)
+		board_.placePiece(player,row,col);
+		numMoves_++;
+
+		// Check for captures
+		for ( CaptureChecker checker : captureCheckers_ ) {
+			checker.executeCaptures(player,row,col);
+		}
+
+		// Check win conditions
+		if ( checkIfWon(player) ) {
+			System.out.println("Someone Won!");
+			isWon_ = true;
+		}
+		return true;
+	};
+
+	/**
+	 * Checks if a move is valid based off of all the move checkers associated
+	 * with this rule set
+	 * 
+	 * @param player
+	 *          - Player making the move
+	 * @param row
+	 *          - Row where a piece is being placed
+	 * @param col
+	 *          - Column where a piece is being placed
+	 * @return True if the move is valid, false otherwise
+	 */
+	private boolean checkIsValidMove ( Player player, int row, int col ) {
+		for ( MoveChecker checker : moveCheckers_ ) {
+			if ( !checker.isValidMove(player,numMoves_,row,col) ) {
+//				System.out.println(checker.getClass().toString() + "failed");
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Checks if the game has been won by a player.
+	 * 
+	 * @param player
+	 *          - Player who made the last move
+	 * @return True if the game is won, false otherwise
+	 */
+	private boolean checkIfWon ( Player player ) {
+		for ( WinCondition condition : winConditions_ ) {
+			if ( condition.checkCondition(player) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns the number of moves made in this game so far
+	 * 
+	 * @return An integer representing the number of moves that have been made so
+	 *         far
+	 */
+	public int getNumMoves () {
+		return numMoves_;
+	}
+	
+	public void setNumMoves(int n) {
+		numMoves_ = n;
+	}
+
+	/**
+	 * Returns whether or not the game has been won
+	 * 
+	 * @return True if the game has been won, false otherwise
+	 */
+	public boolean isWon () {
+		return isWon_;
+	}
+
+}

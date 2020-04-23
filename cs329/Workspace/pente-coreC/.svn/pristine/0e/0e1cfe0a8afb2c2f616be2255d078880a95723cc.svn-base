@@ -1,0 +1,37 @@
+
+/**
+ * @author famkenouwens
+ *
+ */
+public class NoCapturesPente extends Rules {
+
+	/**
+	 * 
+	 */
+	public NoCapturesPente () {
+		//we don't want to set the captured stones variable because we're not allowed to check for captures anyway, but if we don't set it then we'll get exceptions in the code!
+		//we cannot win by capturing stones
+			//actually not allowed to even check for captures --> how to implement this in the abstract class?
+		capturedStonesMin_ = 0;
+	}
+
+	@Override
+	public boolean validMove ( int x, int y, int color ) {
+		//no 
+		return false;
+	}
+
+	@Override
+	public boolean winConditionConsec ( int consecStones ) {
+		if (consecStones >= 5) { //we win by having 5 or more stones in a row
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean winConditionCapture ( Player currentPlayer ) {
+		return false;
+	}
+
+}

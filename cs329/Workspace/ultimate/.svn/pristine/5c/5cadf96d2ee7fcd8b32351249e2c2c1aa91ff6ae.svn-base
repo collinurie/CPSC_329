@@ -1,0 +1,175 @@
+package GUI;
+
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Optional;
+
+import GUI.BoardCustomCanvas;
+import Pente.ComputerPlayer;
+import Pente.Move;
+import Pente.NetworkPlayer;
+import Pente.PenteGame;
+import Pente.Player;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Polygon;
+import javafx.stage.Stage;
+
+public class BoardWindowController {
+
+	private int moveNum_;
+
+	@FXML
+	private BorderPane borderPane;
+
+	@FXML
+	private Label player1Score;
+
+	@FXML
+	private Polygon leftArrow;
+
+	@FXML
+	private Polygon rightArrow;
+
+	@FXML
+	private Label player2Score;
+
+	@FXML
+	private BoardCustomCanvas boardCanvas;
+
+//  public PenteGame game_;
+//  
+//  public void setGame(PenteGame g) {
+//  	game_ = g;
+//  }
+
+	@FXML
+	void boxedClicked ( MouseEvent event ) {
+		// These need to be implemented
+		double clickX = event.getX() - 20;
+		double clickY = event.getY() - 20;
+		int boardX = (int) Math.round((clickX / 40));
+		int boardY = (int) Math.round((clickY / 40));
+		int row = boardY;
+		int col = boardX;
+		Player currentPlayer =
+		    moveNum_ % 2 == 0 ? HomeWindowController.getPlayerOne()
+		        : HomeWindowController.getPlayerTwo();
+		boolean success =
+		    currentPlayer.handleUserInput(new Move(row,col,currentPlayer));
+		moveNum_++;
+		if ( currentPlayer.isNetwork() ) {
+			NetworkPlayer np = (NetworkPlayer) currentPlayer;
+			boardCanvas.paintBoard(np.getRecentBoard());
+//			boardCanvas.paintBoard(np.awaitResponse());
+
+		} else {
+			currentPlayer = moveNum_ % 2 == 0 ? HomeWindowController.getPlayerOne()
+			    : HomeWindowController.getPlayerTwo();
+			if ( currentPlayer.isComputer() ) {
+				moveNum_++;
+			}
+		}
+		if ( success ) {
+			int[][] board = currentPlayer.getBoardArray();
+			boardCanvas.paintBoard(board);
+			changeArrow(currentPlayer.getPieceNum());
+			updateScores();
+			if ( currentPlayer.gameIsWon() ) {
+				try {
+					showGameOver(currentPlayer.getPieceNum());
+				} catch ( IOException e ) {
+					e.printStackTrace();
+				}
+
+			}
+
+		}
+
+	}
+
+	@FXML
+	void quit ( ActionEvent event ) throws IOException {
+		Pane welcomePane =
+		    (Pane) FXMLLoader.load(getClass().getResource("HomeWindow.fxml"));
+		Scene welcomeScene = new Scene(welcomePane);
+
+		Stage stage = (Stage) boardCanvas.getScene().getWindow();
+		stage.setScene(welcomeScene);
+		stage.show();
+	}
+
+	@FXML
+	void restart ( ActionEvent event ) throws IOException, URISyntaxException {
+
+		String url = "https://www.pente.net/instructions.html";
+    Runtime runtime = Runtime.getRuntime();
+    runtime.exec("/usr/bin/firefox -new-window " + url);
+	}
+
+//  public void updateScores(int currPlayer, int currPlayerScore){
+//  	if(currPlayer == 1) {
+//  	player1Score.setText(Integer.toString(currPlayerScore));
+//  	}else {
+//  	player2Score.setText(Integer.toString(currPlayerScore));
+//  	}
+//	}
+	public void updateScores () {
+		Player p1 = HomeWindowController.getPlayerOne();
+		Player p2 = HomeWindowController.getPlayerTwo();
+		player1Score.setText(Integer.toString(p1.getCaptures()));
+
+		player2Score.setText(Integer.toString(p2.getCaptures()));
+
+	}
+
+	public void changeArrow ( int playerTurn ) {
+
+		if ( playerTurn != 1 ) { // player 2 turn
+			rightArrow.setStyle("-fx-fill : #1dd105");
+			leftArrow.setStyle("-fx-fill : #959696");
+		} else { // player 1 turn
+			leftArrow.setStyle("-fx-fill : #1dd105");
+			rightArrow.setStyle("-fx-fill : #959696");
+		}
+	}
+
+	public void showGameOver ( int winner ) throws IOException {
+		String color = "Black";
+		if ( winner == 1 ) {
+			color = "White";
+		}
+
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Game Over!");
+		alert.setHeaderText(color + " has won!");
+		// alert.setContentText("Choose your option.");
+
+		ButtonType quitButton = new ButtonType("Quit to Main Menu");
+
+		alert.getButtonTypes().setAll(quitButton);
+
+		Optional<ButtonType> result = alert.showAndWait();
+		if ( result.get() == quitButton ) {
+			Pane welcomePane =
+			    (Pane) FXMLLoader.load(getClass().getResource("HomeWindow.fxml"));
+			Scene welcomeScene = new Scene(welcomePane);
+
+			Stage stage = (Stage) boardCanvas.getScene().getWindow();
+			stage.setScene(welcomeScene);
+			stage.show();
+		}
+	}
+}

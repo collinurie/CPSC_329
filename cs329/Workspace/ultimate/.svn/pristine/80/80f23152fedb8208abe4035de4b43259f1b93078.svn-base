@@ -1,0 +1,26 @@
+Start vs online
+@startuml
+start
+floating note left: Start vs online opponent
+repeat :Start menu;
+:Select 2 Local Players & Game Type;
+:Select Play;
+:Enter IP address;
+ fork
+ 	repeat   :player 1 moves;
+   :player 2 moves;
+   repeat while (Game Won?) is (no)
+   ->yes;
+ fork again
+   :Help;
+   :Close help;
+   detach
+ fork again
+	:Quit;
+	
+   	detach
+ endfork
+repeat while (Win Screen) is (New Game)
+->quit;
+ stop
+@enduml

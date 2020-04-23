@@ -1,0 +1,78 @@
+package network;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+
+import Pente.*;
+/**
+ * @author ys6270
+ *
+ */
+public class Server {
+
+	private static boolean shutdown_;
+	private static int socketNum_;
+	private PenteGame game_;
+
+	//TODO:
+	//initial connections from servers and players
+	//quitting
+	//valid move	
+
+	//send updated board
+	//or not valid move
+	//or someone won
+
+	public static void main (String args[]) throws InterruptedException {
+		ArrayList<Thread> threads = new ArrayList<Thread>();
+
+		ServerSocket ss = new ServerSocket(socketNum_);
+
+		//Loop to keep server running
+		while ( !shutdown_ ) {
+			Socket s = null; 
+			try { 
+
+				//Set up Server socket
+				Socket connection = ss.accept();
+				// socket object to receive incoming client requests 
+				s = ss.accept(); 
+
+				// obtaining input and out streams 
+				DataInputStream dis = new DataInputStream(s.getInputStream()); 
+				DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
+
+				// create a new thread object 
+				Thread t = new ClientHandler(s, dis, dos); 
+
+				// Invoking the start() method 
+				t.start(); 
+			} catch ( IOException e ) {
+				System.out.println("I/O error: "+e.getMessage());
+				shutdown();
+				try {
+					ss.close();
+				} catch ( IOException e1 ) {
+					System.out.println("I/O error: "+e.getMessage());
+				}
+			}
+		}
+	}
+
+	public static void shutdown() {
+		shutdown_ = true;
+	}
+
+	public void setSocketNum(int num) {
+		socketNum_ = num;
+	}
+
+	public boolean validateAndMove(Move m) {
+		return game_.getRules().makeMove(m.getPlayer(),m.getRow(),m.getCol());
+	} 
+
+}

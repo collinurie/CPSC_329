@@ -1,0 +1,76 @@
+package application;
+
+import javafx.concurrent.Task;
+
+/**
+ * @author ak5158
+ *
+ */
+public class SystemController {
+	private ServerComm comm_;
+	private GUIController handler_;
+
+	public SystemController(GUIController handle, String host, int port) {
+		//System.out.println("SystemController");
+		handler_ = new GUIController();
+		comm_ = new ServerComm(host,port);
+	}
+
+	public void getKnockKnock() {
+
+		KnockKnockTask task = new KnockKnockTask();
+		task.setOnSucceeded(e -> {
+			try {
+				String joke = task.getValue();
+				handler_.displayKnockKnock(joke);
+			} catch ( Exception e1 ) {
+				e1.printStackTrace();
+			}
+		});
+	
+		Thread t = new Thread(task);
+		t.start();
+
+
+	}
+
+	public void getRiddle() {
+
+	}
+
+	public void answerRiddle() {
+
+	}
+
+	public void shutdownServer() {
+
+	}
+
+
+
+	
+	class KnockKnockTask extends Task<String>{
+
+		@Override
+		protected String call () throws Exception {
+			comm_.connect();
+			String wholeJoke = "";
+			comm_.writeLine("knockknock");
+			// go through knock knock protocol 
+			wholeJoke = wholeJoke+comm_.readLine()+"\n";
+			comm_.writeLine("who's there");
+			wholeJoke = wholeJoke+ "whose there?\n";
+			String thing = comm_.readLine()+"\n";
+			comm_.writeLine(thing+" who?");
+			wholeJoke = wholeJoke+ thing+" who?\n";
+			wholeJoke = wholeJoke+comm_.readLine();
+			comm_.disconnect();
+			return wholeJoke;
+		}  
+		
+		
+		
+	}
+	
+	
+}

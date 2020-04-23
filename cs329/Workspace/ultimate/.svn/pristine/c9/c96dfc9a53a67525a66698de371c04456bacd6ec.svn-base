@@ -1,0 +1,68 @@
+package GUI;
+
+import java.io.IOException;
+
+import GUI.BoardCustomCanvas;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Polygon;
+import javafx.stage.Stage;
+
+public class BoardWindowController {
+
+	@FXML
+  private BorderPane borderPane;
+
+  @FXML
+  private Label player1Score;
+
+  @FXML
+  private Polygon leftArrow;
+
+  @FXML
+  private Polygon rightArrow;
+
+  @FXML
+  private Label player2Score;
+
+  @FXML
+  private BoardCustomCanvas boardCanvas;
+
+  @FXML
+  void boxedClicked(MouseEvent event) {
+
+  }
+
+  @FXML
+  void quit(ActionEvent event) throws IOException {
+  	Pane welcomePane = (Pane) FXMLLoader.load(getClass().getResource("HomeWindow.fxml"));
+		Scene welcomeScene = new Scene(welcomePane);
+
+		Stage stage = (Stage) boardCanvas.getScene().getWindow();
+		stage.setScene(welcomeScene);
+		stage.show();
+  }
+
+  @FXML
+  void restart(ActionEvent event) {
+
+  }
+  
+  public void changeArrow(int playerTurn) {
+		
+		if(playerTurn != 1) { // player 2 turn 
+			rightArrow.setStyle("-fx-fill : #1dd105");
+			leftArrow.setStyle("-fx-fill : #959696");
+		} else { // player 1 turn
+			leftArrow.setStyle("-fx-fill : #1dd105");
+			rightArrow.setStyle("-fx-fill : #959696");
+		}
+	}
+}

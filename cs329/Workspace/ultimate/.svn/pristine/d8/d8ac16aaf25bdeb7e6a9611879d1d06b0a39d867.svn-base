@@ -1,0 +1,29 @@
+package Pente;
+
+/**
+ * @author mb5053
+ *
+ */
+public class LocalPlayer extends Player{
+
+	/**
+	 * @param name
+	 */
+	protected LocalPlayer ( String name ) {
+		super(name);
+		isComputer_ = false;
+	}
+
+	@Override
+	public void handleUserInput (Move move) {
+		boolean attempt = game_.makePlayerMove(this,move.getRow(),move.getCol());
+		if (attempt) {
+			int[][] newBoard = game_.getBoard().getBoard();
+			// Update the GUI with the new board
+		} else {
+			// Update the GUI with an invalid move message
+		}
+		
+	}
+	
+}

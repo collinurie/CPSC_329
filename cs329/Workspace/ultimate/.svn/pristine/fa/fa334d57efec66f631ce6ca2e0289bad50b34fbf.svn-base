@@ -1,0 +1,56 @@
+package Pente;
+
+/**
+ * @author mb5053
+ *
+ */
+public class LocalPlayer extends Player{
+
+	/**
+	 * @param name: name of the player
+	 */
+	public LocalPlayer ( String name) {
+		super(name);
+		isComputer_ = false; //not a computer player
+		isNetwork_ = false;
+	}
+	
+	public void setGame (PenteGame game) {
+		game_ = game;
+	}
+	
+	public int[][] getBoardArray() {
+		return game_.getPenteBoard().getBoard();
+	}
+	
+	public boolean gameIsWon() {
+		return game_.isWon();
+	}
+
+	/**
+	 * @param move: move the player makes
+	 * 
+	 * **************UNDER REVIEW********************
+	 * Sees if a players move from the controller
+	 * is a legal move and if it is the method updates
+	 * the GUI, and if not a notification is sent to
+	 * the user.
+	 * 
+	 * **TODO******************************************
+	 * rearrange method to return a 2D array if it is a valid move
+	 * and null otherwise.
+	 */
+	@Override
+	public boolean handleUserInput (Move move) {
+		boolean attempt = game_.makePlayerMove(move); // boolean telling whether the move is legal
+		if (attempt) {
+			int[][] newBoard = game_.getPenteBoard().getBoard(); 
+			// Update the GUI with the new board
+		} else {
+			// Update the GUI with an invalid move message
+		}
+		return attempt;
+		
+	}
+	
+}
