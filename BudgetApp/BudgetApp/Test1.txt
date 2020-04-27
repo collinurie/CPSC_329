@@ -1,0 +1,21 @@
+item1 $35.78
+item 2 $34.92
+item 3$9.22
+item 4$12.32
+item 5 $63.33
+item 6$89.32
+item 7$54.66
+item 8$8.25
+item 9 $28.29
+item 10 $3.92
+item 11$2.21
+item 12$4.32
+item 13$54.22
+item 14$67.20
+item 15$33.23
+item 16 $28.28
+item 17 $33.90
+item 19$67.33
+item 20$92.43
+item 21$23.32
+item 22$0.04
