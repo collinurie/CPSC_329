@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CalibrateOne">
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="272dp"
+        android:layout_height="388dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="130dp"
+            android:layout_height="385dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/CapacityBtton"
+                android:layout_width="match_parent"
+                android:layout_height="51dp"
+                android:gravity="center"
+                android:text="Scale Capacity" />
+
+            <TextView
+                android:id="@+id/UnitsView"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center"
+                android:text="Primary Units" />
+
+            <TextView
+                android:id="@+id/TrackingView"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:gravity="center"
+                android:text="Auto Zero Tracking" />
+
+            <TextView
+                android:id="@+id/MotionView"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:gravity="center"
+                android:text="Motion Band" />
+
+            <TextView
+                android:id="@+id/DivisionView"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="Division Size" />
+
+            <TextView
+                android:id="@+id/FilterView"
+                android:layout_width="match_parent"
+                android:layout_height="47dp"
+                android:gravity="center"
+                android:text="Digital Filter" />
+
+            <TextView
+                android:id="@+id/TareView"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:text="Auto Tare" />
+
+            <TextView
+                android:id="@+id/NTEPView"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center"
+                android:text="NTEP State" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="384dp"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/CapacityEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName|number" />
+
+            <Button
+                android:id="@+id/UnitsButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="lb" />
+
+            <Button
+                android:id="@+id/TrackingButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3" />
+
+            <Button
+                android:id="@+id/MotionButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3" />
+
+            <Button
+                android:id="@+id/DivisionButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1.0" />
+
+            <Button
+                android:id="@+id/FilterButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Standard" />
+
+            <Button
+                android:id="@+id/TareButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ON" />
+
+            <Button
+                android:id="@+id/NTEPButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="OFF" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calibration"
+        android:textSize="34dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/CalibrationButton"
+        android:layout_width="158dp"
+        android:layout_height="37dp"
+        android:text="Calibrate"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+</android.support.constraint.ConstraintLayout>
